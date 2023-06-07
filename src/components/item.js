@@ -15,7 +15,7 @@ const Item = ({item, onHandleDelete, onHandleEditItem}) => {
         fetch (`${dataURL}/${item.id}`, {
             method: 'DELETE'
         })
-        .then(res => red.json())
+        .then(res => res.json())
         .then(data => onHandleDelete(data.id))
         .catch(err => console.log(err))
     }
