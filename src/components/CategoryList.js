@@ -1,5 +1,5 @@
 import React from 'react'
-import Item from './Item'
+import Item from './item'
 import {Box, List, Grid, Typography} from '@mui/material';
 
 const CategoryList = ({category, onHandleDelete, onHandleEditItem, list}) => {
