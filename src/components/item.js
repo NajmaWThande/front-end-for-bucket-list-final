@@ -39,7 +39,7 @@ const Item = ({item, onHandleDelete, onHandleEditItem}) => {
             <Checkbox onChange={handleEdit} checked={markedComplete}/>
             <ListItemText className="Name" primary={item.name} secondary={markedComplete? "Yaaay! I've Done it" : "I Can't wait to do this"} />       
             <IconButton aria-label="Delete" size="Small" onClick={handleDelete}>
-              <DeleteIcon fontSize="medium" />
+              <DeleteIcon fontSize="Medium" />
             </IconButton>
         </ListItem>
       )
