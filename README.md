@@ -1,70 +1,87 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Bucket List Project
+The Bucket List Project is a web application that allows users to create and manage their personal bucket lists. It provides a platform to keep track of goals, dreams, and experiences users want to accomplish within their lifetime. The project combines the backend framework Sinatra with the frontend library ReactJS to create an interactive and dynamic user experience.
 
-## Available Scripts
+## Features
+1. Bucket List Creation: Users can create multiple bucket lists and add items to each list.
 
-In the project directory, you can run:
+2. Item Management: Users can add, edit, and delete items within their bucket lists.
+3. Marking Items as Completed: Users can mark items as completed when they have achieved their goals.
+4. Categories: Users can create categories to their liking and items to them.
 
-### `npm start`
+## Technologies Used
+# Backend:
+1. Sinatra: A lightweight Ruby web application framework that handles routing and backend logic.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+2. SQLite: A powerful open-source relational database for data storage.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. ActiveRecord: A Ruby ORM (Object-Relational Mapping) library for database interactions.
 
-### `npm test`
+# Frontend:
+1. ReactJS: A popular JavaScript library for building user interfaces.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. HTML: Markup language for structuring the web pages.
 
-### `npm run build`
+3. CSS: Styling language for designing the UI.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. JavaScript: Programming language for adding interactivity to the application.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Installation
+Clone the repository:
 
-### `npm run eject`
+bash
+Copy code
+git clone https://github.com/your-username/bucket-list-project.git
+Install dependencies:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Backend:
+bash
+Copy code
+cd bucket-list-project/backend
+bundle install
+Frontend:
+bash
+Copy code
+cd bucket-list-project/frontend
+npm install
+Database Setup:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Set up a SQLite database and update the database configuration in bucket-list-project/backend/config/database.yml with your database credentials.
+Run Migrations:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Run the following commands in the bucket-list-project/backend directory to set up the database tables:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+bash
+Copy code
+bundle exec rake db:create
+bundle exec rake db:migrate
+Start the Servers:
 
-## Learn More
+Backend:
+bash
+Copy code
+cd bucket-list-project/backend
+bundle exec rackup
+Frontend:
+bash
+Copy code
+cd bucket-list-project/frontend
+npm start
+Access the Application:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Open your web browser and visit http://localhost:3000 to access the Bucket List Project.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Usage
+Create a category you would like
+Create a new bucket list and add items to it.
+Add items to the category
+Manage your items by editing, deleting, or marking them as completed.
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Contributing
+Contributions are welcome! If you have any ideas, enhancements, or bug fixes, please submit a pull request or open an issue.
 
-### Analyzing the Bundle Size
+## License
+This project is licensed under the MIT License.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
