@@ -27,28 +27,30 @@ The Bucket List Project is a web application that allows users to create and man
 4. JavaScript: Programming language for adding interactivity to the application.
 
 
-Installation
+## Installation
 Clone the repository:
 
-bash
 Copy code
 git clone https://github.com/your-username/bucket-list-project.git
-Install dependencies:
 
-Backend:
+## Install dependencies:
+
+1. Backend:
 bash
 Copy code
 cd bucket-list-project/backend
 bundle install
-Frontend:
+
+2. Frontend:
 bash
 Copy code
 cd bucket-list-project/frontend
 npm install
-Database Setup:
+
+3. Database Setup:
 
 Set up a SQLite database and update the database configuration in bucket-list-project/backend/config/database.yml with your database credentials.
-Run Migrations:
+4. Run Migrations:
 
 Run the following commands in the bucket-list-project/backend directory to set up the database tables:
 
@@ -63,6 +65,7 @@ bash
 Copy code
 cd bucket-list-project/backend
 bundle exec rackup
+
 Frontend:
 bash
 Copy code
