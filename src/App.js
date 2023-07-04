@@ -1,81 +1,66 @@
-import * as React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Homepage from './components/Homepage';
-import NewItemForm from './components/NewItemForm';
-import NewCategoryForm from './components/NewCategoryForm';
-import CategoryList from './components/CategoryList';
-import { dataURL } from './Global';
-import DeleteCategoryForm from './components/DeleteCategoryForm';
+import React, { Component } from 'react';
+import axios from 'axios';
+import { BrowserRouter,  Route } from 'react-router-dom';
+import Home from './components/Home';
+import Signup from './components/Signup';
+import Login from './components/Login';
 
-const App = () => {  
-  const [list, setList] = React.useState([]);
-  const [allCategories, setAllCategories] = React.useState([]);
-  const [isAddingCategory, setIsAddingCategory] = React.useState(false);
-  const [isDeletingCategory, setIsDeletingCategory] = React.useState(false);
 
-  React.useEffect(() => {
-    document.title = "Bucket List | Home";
-    
-    fetch(dataURL)
-    .then(res => res.json())
-    .then(data => setList(data))
-    .catch(err => console.log(err))
 
-    fetch(dataURL+`/categories`)
-    .then(res => res.json())
-    .then(data => setAllCategories(data))
-    .catch(err => console.log(err))
-  }, []);
-
-  const handleDelete = (id) => {
-    let newList = list.filter(item => item.id !== id);
-    setList(newList);
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoggedIn: false,
+      user: {}
+    };
   }
 
-  const handleEdit = (updatedItem) => {
-    let newList = list.map(item => item.id === updatedItem.id ? updatedItem : item);
-    setList(newList);
+  componentDidMount() {
+    this.loginStatus();
   }
 
-  const handleAddItem = (newItem) => {
-    let newList = [...list, newItem];
-    setList(newList);
-  }
+  loginStatus = () => {
+    axios
+      .get('http://localhost:3001/logged_in', { withCredentials: true })
+      .then((response) => {
+        if (response.data.logged_in) {
+          this.handleLogin(response);
+        } else {
+          this.handleLogout();
+        }
+      })
+      .catch((error) => console.log('api errors:', error));
+  };
 
-  const handleAddCategory = (newCategory) => {
-    let newAllCategories = [...allCategories, newCategory];
-    setAllCategories(newAllCategories);
-    setIsAddingCategory(false);
-  }
+  handleLogin = (data) => {
+    this.setState({
+      isLoggedIn: true,
+      user: data.user
+    });
+  };
 
-    const handleDeleteCategory = (id) => {
-    let newAllCategories = allCategories.filter(category => category.id !== id);
-    setAllCategories(newAllCategories);
-    setIsDeletingCategory(false)
-  }
+  handleLogout = () => {
+    this.setState({
+      isLoggedIn: false,
+      user: {}
+    });
+  };
 
-  const categoryRoutes = allCategories.map(category => <Route key={category.id} path={`/${category.name}`} element={<CategoryList  list={list} category={category} onHandleDelete={handleDelete} onHandleEditItem={handleEdit}/>} />);
-  
-  return (
-    <div className="App">
-      <Router>
-        <Header 
-        categories={allCategories}  
-        setIsAddingCategory={setIsAddingCategory} 
-        setIsDeletingCategory={setIsDeletingCategory} 
-        isDeletingCategory={isDeletingCategory}
-        />
-        {isAddingCategory ? <NewCategoryForm  categories={allCategories} onHandleAddCategory={handleAddCategory} onSetIsAddingCategory={setIsAddingCategory}/> : null}
-        {isDeletingCategory ? <DeleteCategoryForm categories={allCategories} onHandleDeleteCategory={handleDeleteCategory} /> : null}
-        <NewItemForm onHandleAddItem={handleAddItem} categories={allCategories}/>
-        <Routes>
-          <Route path="/" element={<Homepage  />} />
-          {categoryRoutes}      
-        </Routes>
-      </Router>
-    </div>
-  );
+  render() {
+    return (
+      <div>
+        <BrowserRouter>
+          <Route>
+            {/* Add components for each route */}
+            <Route exact path="/home" component={Home} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/signup" component={Signup} />
+          </Route>
+        </BrowserRouter>
+      </div>
+    );
+  }
 }
 
 export default App;
