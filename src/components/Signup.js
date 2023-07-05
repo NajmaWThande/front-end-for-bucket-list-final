@@ -38,11 +38,17 @@ const Signup = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(user),
-      credentials: 'include'
     })
-      .then((response) => response.json())
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Network response was not OK');
+      }
+    })
       .then((data) => {
-        if (data.status === 'created') {
+        console.log(data.status)
+        if (data.name) {
           navigate('/login');
         } else {
           setUserData((prevUserData) => ({

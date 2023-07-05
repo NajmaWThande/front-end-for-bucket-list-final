@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import './Login.css';
 
-const Login = ({handleLogin}) => {
+const Login = ({ handleLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState([]);
@@ -10,7 +11,7 @@ const Login = ({handleLogin}) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-     if (name === 'email') {
+    if (name === 'email') {
       setEmail(value);
     } else if (name === 'password') {
       setPassword(value);
@@ -19,19 +20,18 @@ const Login = ({handleLogin}) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-  
+
     const user = {
       email: email,
       password: password
     };
-  
+
     fetch('http://localhost:3001/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(user),
-      credentials: 'include',
+      body: JSON.stringify(user)
     })
       .then((response) => {
         if (response.ok) {
@@ -43,14 +43,7 @@ const Login = ({handleLogin}) => {
       .then((data) => {
         console.log(data);
         if (data.name) {
-          // Perform any necessary actions after successful login
-          // For example, update app state, set authentication token, etc.
-          // You can also store the user details in the state or context for future reference
-  
-          // Example action: Set user as logged in
-         handleLogin(data);
-  
-          // Redirect or navigate to a protected route
+          handleLogin(data);
           navigate('/bucketlist');
         } else {
           setErrors(data.error);
@@ -58,34 +51,44 @@ const Login = ({handleLogin}) => {
       })
       .catch((error) => console.log('login errors:', error));
   };
-  
+
   return (
-    <div>
+    <div className="container">
       <h1>Log In</h1>
       <form onSubmit={handleSubmit}>
-        <div>
-        {errors}
+        <div className="form-group">
+          {errors && <div className="text-danger">{errors}</div>}
         </div>
-        
-  
-        <input
-          placeholder="email"
-          type="text"
-          name="email"
-          value={email}
-          onChange={handleChange}
-        />
 
-        <input
-          placeholder="password"
-          type="password"
-          name="password"
-          value={password}
-          onChange={handleChange}
-        />
+        <div className="form-group">
+          <input
+            className="form-control"
+            placeholder="Email"
+            type="text"
+            name="email"
+            value={email}
+            onChange={handleChange}
+          />
+        </div>
 
-        <button type="submit"> Log In </button>
-        <div> or <Link to="/signup">sign up</Link></div>
+        <div className="form-group">
+          <input
+            className="form-control"
+            placeholder="Password"
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+          />
+        </div>
+
+        <button className="btn btn-primary" type="submit">
+          Log In
+        </button>
+
+        <div className="mt-3">
+          or <Link to="/signup">Sign Up</Link>
+        </div>
       </form>
     </div>
   );
