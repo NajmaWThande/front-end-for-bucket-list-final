@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import Homepage from './components/Homepage';
+import NewItemForm from './components/NewItemForm';
+
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
@@ -43,7 +46,7 @@ function App() {
           <Route path="/home" element={<Home user={user} />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/bucketlist" element={<Homepage/>} />
+          <Route path="/bucketlist" element={<Homepage />} />
           {/* Add a default route to redirect to a specific route */}
           <Route path="/" element={<Navigate to="/home" />} />
         </Routes>
