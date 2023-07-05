@@ -1,109 +1,94 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-class Login extends Component {
-  constructor(props) {
-    super(props);
+const Login = ({handleLogin}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState([]);
 
-    this.state = 
-    {
-      username: '',
-      email: '',
-      password: '',
-      errors: ''
-    };
-  }
+  const navigate = useNavigate();
 
-  handleChange = (event) => {
+  const handleChange = (event) => {
     const { name, value } = event.target;
-    this.setState({
-      [name]: value
-    });
+     if (name === 'email') {
+      setEmail(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
   };
 
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    const { username, email, password } = this.state;
-
-    let user = 
-    {
-      username: username,
+  
+    const user = {
       email: email,
       password: password
     };
-
-    axios.post('http://localhost:3001/login', { user }, { withCredentials: true })
-      .then(response => {
-        if (response.data.logged_in) {
-          this.props.handleLogin(response.data);
-          this.redirect();
+  
+    fetch('http://localhost:3001/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+      credentials: 'include',
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
         } else {
-          this.setState({
-            errors: response.data.errors
-          });
+          throw new Error('Network response was not OK');
         }
       })
-      .catch(error => console.log('api errors:', error));
+      .then((data) => {
+        console.log(data);
+        if (data.name) {
+          // Perform any necessary actions after successful login
+          // For example, update app state, set authentication token, etc.
+          // You can also store the user details in the state or context for future reference
+  
+          // Example action: Set user as logged in
+         handleLogin(data);
+  
+          // Redirect or navigate to a protected route
+          navigate('/bucketlist');
+        } else {
+          setErrors(data.error);
+        }
+      })
+      .catch((error) => console.log('login errors:', error));
   };
+  
+  return (
+    <div>
+      <h1>Log In</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+        {errors}
+        </div>
+        
+  
+        <input
+          placeholder="email"
+          type="text"
+          name="email"
+          value={email}
+          onChange={handleChange}
+        />
 
-  redirect = () => {
-    this.props.history.push('/');
-  };
+        <input
+          placeholder="password"
+          type="password"
+          name="password"
+          value={password}
+          onChange={handleChange}
+        />
 
-  handleErrors = () => {
-    return (
-      <div>
-
-        <ul>
-          {this.state.errors.map(error => (
-            <li key={error}>{error}</li>
-          ))}
-        </ul>
-
-      </div>
-    );
-  };
-
-  render() {
-    const { username, email, password } = this.state;
-
-    return (
-      <div>
-        <h1>Log In</h1>
-        <form onSubmit={this.handleSubmit}>
-
-          <input
-            placeholder="username"
-            type="text"
-            name="username"
-            value={username}
-            onChange={this.handleChange}
-          />
-
-          <input
-            placeholder="email"
-            type="text"
-            name="email"
-            value={email}
-            onChange={this.handleChange}
-          />
-
-          <input
-            placeholder="password"
-            type="password"
-            name="password"
-            value={password}
-            onChange={this.handleChange}
-          />
-
-          <button type="submit"> Log In </button>
-          <div> or <Link to='/signup'>sign up</Link></div>
-          
-        </form>
-      </div>
-    );
-  }
-}
+        <button type="submit"> Log In </button>
+        <div> or <Link to="/signup">sign up</Link></div>
+      </form>
+    </div>
+  );
+};
 
 export default Login;

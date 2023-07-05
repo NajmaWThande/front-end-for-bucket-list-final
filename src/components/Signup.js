@@ -1,119 +1,113 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-class Signup extends Component {
-  constructor(props) {
-    super(props);
+const Signup = () => {
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    errors: []
+  });
 
-    this.state = 
-    {
-      username: '',
-      email: '',
-      password: '',
-      password_confirmation: '',
-      errors: ''
-    };
-  }
+  const navigate = useNavigate();
 
-  handleChange = (event) => {
+  const handleChange = (event) => {
     const { name, value } = event.target;
-    this.setState({
+    setUserData((prevUserData) => ({
+      ...prevUserData,
       [name]: value
-    });
+    }));
   };
 
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    const { username, email, password, password_confirmation } = this.state;
+    const { name, email, password, password_confirmation } = userData;
 
-    let user = 
-    {
-      username: username,
-      email: email,
-      password: password,
-      password_confirmation: password_confirmation
+    const user = {
+      name,
+      email,
+      password,
+      password_confirmation
     };
+    console.log(user)
 
-    axios.post('http://localhost:3001/users', { user }, { withCredentials: true })
-      .then(response => {
-        if (response.data.status === 'created') {
-          this.props.handleLogin(response.data);
-          this.redirect();
+    fetch('http://localhost:3001/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user),
+      credentials: 'include'
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 'created') {
+          navigate('/login');
         } else {
-          this.setState({
-            errors: response.data.errors
-          });
+          setUserData((prevUserData) => ({
+            ...prevUserData,
+            errors: data.errors
+          }));
         }
       })
-      .catch(error => console.log('api errors:', error));
+      .catch((error) => console.log('Signup errors:', error));
   };
 
-  redirect = () => {
-    this.props.history.push('/');
-  };
 
-  handleErrors = () => {
+
+  const renderErrors = () => {
     return (
       <div>
-
         <ul>
-          {this.state.errors.map(error => (
-            <li key={error}>{error}</li>
-          ))}
+          {userData.errors}
         </ul>
-
       </div>
     );
   };
 
-  render() {
-    const { username, email, password, password_confirmation } = this.state;
-    return (
-      <div>
-
-        <h1>Sign Up</h1>
-        <form onSubmit={this.handleSubmit}>
-
-          <input
-            placeholder="username"
-            type="text"
-            name="username"
-            value={username}
-            onChange={this.handleChange}
-          />
-
-          <input
-            placeholder="email"
-            type="text"
-            name="email"
-            value={email}
-            onChange={this.handleChange}
-          />
-
-          <input
-            placeholder="password"
-            type="password"
-            name="password"
-            value={password}
-            onChange={this.handleChange}
-          />
-
-          <input
-            placeholder="password confirmation"
-            type="password"
-            name="password_confirmation"
-            value={password_confirmation}
-            onChange={this.handleChange}
-          />
-
-          <button type="submit"> Sign Up </button>
-          <div>or <Link to="/login">Log In</Link></div>
-
-        </form> 
-      </div>
-    );
-  }
-}
+  const { name, email, password, password_confirmation } = userData;
+  
+  return (
+    <div>
+      <h1>Sign Up</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          placeholder="name"
+          type="text"
+          name="name"
+          value={name}
+          onChange={handleChange}
+        />
+        <input
+          placeholder="email"
+          type="text"
+          name="email"
+          value={email}
+          onChange={handleChange}
+        />
+        <input
+          placeholder="password"
+          type="password"
+          name="password"
+          value={password}
+          onChange={handleChange}
+        />
+        <input
+          placeholder="password confirmation"
+          type="password"
+          name="password_confirmation"
+          value={password_confirmation}
+          onChange={handleChange}
+        />
+        <button type="submit"> Sign Up </button>
+        <div>
+          or <Link to="/login">Log In</Link>
+        </div>
+      </form>
+      {renderErrors()}
+    </div>
+  );
+};
 
 export default Signup;

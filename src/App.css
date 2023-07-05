@@ -233,3 +233,8 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
+
+.error-text {
+  color: red;
+  margin-top: 5px;
+}
