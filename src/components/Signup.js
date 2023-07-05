@@ -30,7 +30,6 @@ const Signup = () => {
       password,
       password_confirmation
     };
-    console.log(user)
 
     fetch('http://localhost:3001/users', {
       method: 'POST',
@@ -39,15 +38,14 @@ const Signup = () => {
       },
       body: JSON.stringify(user),
     })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error('Network response was not OK');
-      }
-    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Network response was not OK');
+        }
+      })
       .then((data) => {
-        console.log(data.status)
         if (data.name) {
           navigate('/login');
         } else {
@@ -60,8 +58,6 @@ const Signup = () => {
       .catch((error) => console.log('Signup errors:', error));
   };
 
-
-
   const renderErrors = () => {
     return (
       <div>
@@ -73,40 +69,52 @@ const Signup = () => {
   };
 
   const { name, email, password, password_confirmation } = userData;
-  
+
   return (
-    <div>
+    <div className="container">
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
-        <input
-          placeholder="name"
-          type="text"
-          name="name"
-          value={name}
-          onChange={handleChange}
-        />
-        <input
-          placeholder="email"
-          type="text"
-          name="email"
-          value={email}
-          onChange={handleChange}
-        />
-        <input
-          placeholder="password"
-          type="password"
-          name="password"
-          value={password}
-          onChange={handleChange}
-        />
-        <input
-          placeholder="password confirmation"
-          type="password"
-          name="password_confirmation"
-          value={password_confirmation}
-          onChange={handleChange}
-        />
-        <button type="submit"> Sign Up </button>
+        <div className="form-group">
+          <input
+            className="form-control"
+            placeholder="Name"
+            type="text"
+            name="name"
+            value={name}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <input
+            className="form-control"
+            placeholder="Email"
+            type="text"
+            name="email"
+            value={email}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <input
+            className="form-control"
+            placeholder="Password"
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <input
+            className="form-control"
+            placeholder="Confirm Password"
+            type="password"
+            name="password_confirmation"
+            value={password_confirmation}
+            onChange={handleChange}
+          />
+        </div>
+        <button type="submit" className="btn btn-primary">Sign Up</button>
         <div>
           or <Link to="/login">Log In</Link>
         </div>
