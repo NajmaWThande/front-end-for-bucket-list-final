@@ -5,6 +5,7 @@ import Signup from './components/Signup';
 import Login from './components/Login';
 import Homepage from './components/Homepage';
 
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
@@ -43,11 +44,13 @@ function App() {
           <Route path="/home" element={<Home user={user} />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
           <Route path="/signup" element={<Signup />} />
+
           {isLoggedIn ? (
             <Route path="/bucketlist" element={<Homepage />} />
           ) : (
             <Route path="/bucketlist" element={<Navigate to="/login" />} />
           )}
+          
           <Route path="/" element={<Navigate to="/home" />} />
         </Routes>
       </BrowserRouter>
