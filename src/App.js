@@ -3,8 +3,7 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import Signup from './components/Signup';
 import Login from './components/Login';
-import Homepage from './components/Homepage';
-
+import BucketListPage from './components/BucketListPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -15,7 +14,7 @@ function App() {
   }, []);
 
   const loginStatus = () => {
-    fetch('http://localhost:3001/logged_in', { credentials: 'include' })
+    fetch('http://localhost:3001/logged_in',)
       .then((response) => response.json())
       .then((data) => {
         if (data.logged_in) {
@@ -44,13 +43,11 @@ function App() {
           <Route path="/home" element={<Home user={user} />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
           <Route path="/signup" element={<Signup />} />
-
           {isLoggedIn ? (
-            <Route path="/bucketlist" element={<Homepage />} />
+            <Route path="/bucketlist" element={<BucketListPage/>} />
           ) : (
             <Route path="/bucketlist" element={<Navigate to="/login" />} />
           )}
-          
           <Route path="/" element={<Navigate to="/home" />} />
         </Routes>
       </BrowserRouter>
