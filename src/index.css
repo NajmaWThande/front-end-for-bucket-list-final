@@ -1,6 +1,7 @@
 body {
   margin: 0;
-  background-image: url(./images/pexels-monstera-7412085.jpg);
+  background-color: #F5F5F5;
+  /* background-image: url(./images/pexels-monstera-7412085.jpg); */
   background-size: 1200px;
   backdrop-filter: blur(2.5px);
   min-height: 100%;
