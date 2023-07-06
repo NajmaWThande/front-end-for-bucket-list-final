@@ -14,26 +14,42 @@ function App() {
   }, []);
 
   const loginStatus = () => {
-    fetch('http://localhost:3001/logged_in',)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.logged_in) {
-          handleLogin(data);
-        } else {
-          handleLogout();
-        }
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:3001/logged_in', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .catch((error) => console.log('api errors:', error));
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.logged_in) {
+            handleLogin(data);
+          } else {
+            handleLogout();
+          }
+        })
+        .catch((error) => console.log('API error:', error));
+    } else {
+      handleLogout();
+    }
   };
 
   const handleLogin = (data) => {
     setIsLoggedIn(true);
     setUser(data.user);
+    const token = data.token;
+    localStorage.setItem('token', token);
+    localStorage.setItem('userId', data.user.id);
+    console.log(token);
+    console.log(data.user.id);
   };
+  
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUser({});
+    localStorage.removeItem('token');
   };
 
   return (
@@ -44,7 +60,7 @@ function App() {
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
           <Route path="/signup" element={<Signup />} />
           {isLoggedIn ? (
-            <Route path="/bucketlist" element={<BucketListPage/>} />
+            <Route path="/bucketlist" element={<BucketListPage user={user} />} />
           ) : (
             <Route path="/bucketlist" element={<Navigate to="/login" />} />
           )}
