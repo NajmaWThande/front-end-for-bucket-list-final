@@ -63,6 +63,7 @@ function App() {
             </li>
             <li className="nav-item">
               <Link to="/piechart" className="nav-link">Stats</Link>
+
             </li>
           </ul>
         </nav>
