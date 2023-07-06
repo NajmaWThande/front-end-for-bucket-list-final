@@ -60,18 +60,6 @@ export const updateCategory = async (name, category) => {
   return data;
 };
 
-// Deletes a category
-export const deleteCategory = async (name) => {
-  const token = getToken();
-  const response = await fetch(`${baseUrl}/categories/${name}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response;
-};
-
 // Fetches all items
 export const fetchItems = async () => {
   const token = getToken();

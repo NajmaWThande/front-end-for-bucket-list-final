@@ -1,52 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import {
   fetchCategories,
-    fetchItems,
   createCategory,
-  updateCategory,
-  deleteCategory,
   createItem,
   updateItem,
   deleteItem,
   fetchUserById,
 } from './FetchCrud';
 
-function BucketListPage({ userId }) {
+function BucketListPage() {
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [itemName, setItemName] = useState('');
   const [itemCategory, setItemCategory] = useState('');
+  const [userData, setUserData] = useState('');
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem('userId');
   
     if (storedUserId) {
-      fetchUserById(storedUserId)
-        .then((userData) => {
-          return Promise.all([
-            fetchCategories(),
-            fetchItems(),
-          ]);
-        })
-        .then(([categoriesData, itemsData]) => {
-
-            const uniqueCategoryIds = [...new Set(itemsData.map((item) => item.category_id))];
-            const selectedCategoryData = categoriesData.filter((category) =>
-            uniqueCategoryIds.includes(category.id)
-            );
-
-          console.log('Categories:', categoriesData);
-          console.log('Items:', itemsData);
-          console.log('Selected Category:', selectedCategoryData);
-  
+      fetchCategories()
+        .then((categoriesData) => {
           setCategories(categoriesData);
-          setItems(itemsData);
+  
+          return fetchUserById(storedUserId);
+        })
+        .then((userData) => {
+            console.log(userData)
+          setUserData(userData);
+          setItems(userData.items);
+  
+          const uniqueCategoryIds = [...new Set(userData.items.map((item) => item.category_id))];
+          const selectedCategoryData = categories.filter((category) =>
+            uniqueCategoryIds.includes(category.id)
+          );
+  
           setSelectedCategory(selectedCategoryData);
         })
         .catch((error) => console.log(error));
     }
   }, []);
+  
   
   const handleCreateItem = () => {
     const newItem = {
@@ -91,29 +86,6 @@ function BucketListPage({ userId }) {
     createCategory(category)
       .then((data) => {
         setCategories([...categories, data]);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleUpdateCategory = (name, updatedCategory) => {
-    updateCategory(name, updatedCategory)
-      .then((data) => {
-        const updatedCategories = categories.map((category) =>
-          category.name === name ? data : category
-        );
-        setCategories(updatedCategories);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleDeleteCategory = (name) => {
-    deleteCategory(name)
-      .then(() => {
-        const updatedCategories = categories.filter(
-          (category) => category.name !== name
-        );
-        setCategories(updatedCategories);
-        setSelectedCategory(null);
       })
       .catch((error) => console.log(error));
   };
@@ -165,7 +137,6 @@ function BucketListPage({ userId }) {
                 </thead>
                 <tbody>
   {(!selectedCategory || !selectedCategory.items) && (
-    // Render all items if no category is selected or no items in the selected category
     items.map((item) => (
       <tr key={item.id}>
         <td>{item.name}</td>
@@ -213,12 +184,18 @@ function BucketListPage({ userId }) {
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
                 />
-                <input
-                  type="text"
-                  placeholder="Item Category"
+              <select
+                  className="form-select"
                   value={itemCategory}
                   onChange={(e) => setItemCategory(e.target.value)}
-                />
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
                 <button className="btn btn-primary" onClick={handleCreateItem}>
                   Add Item
                 </button>
