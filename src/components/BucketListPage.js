@@ -10,7 +10,7 @@ import {
   updateItem,
   deleteItem,
   fetchUserById,
-} from './fetchCrud';
+} from './FetchCrud';
 
 function BucketListPage({ userId }) {
   const [categories, setCategories] = useState([]);
