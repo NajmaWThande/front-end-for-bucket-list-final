@@ -27,3 +27,95 @@ button {
   font-feature-settings: "abvm";
   
 }
+.container {
+  margin-top: 40px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.row {
+  margin-top: 20px;
+}
+
+.col-3 {
+  border-right: 1px solid #ccc;
+  padding-right: 20px;
+}
+
+.col-9 {
+  padding-left: 20px;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.list-group-item.active {
+  background-color: #f8f9fa;
+}
+
+.table {
+  margin-top: 20px;
+}
+
+.btn {
+  margin-right: 5px;
+  width:auto;
+}
+
+input {
+  margin-right: 10px;
+  width: auto;
+}
+
+button.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+button.btn-primary:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+button.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+button.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input {
+  width: 250px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+button {
+  width: 250px;
+  margin-top: 10px;
+}
