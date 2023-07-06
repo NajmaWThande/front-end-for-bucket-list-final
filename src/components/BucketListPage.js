@@ -11,6 +11,7 @@ import {
   deleteItem,
   fetchUserById,
 } from './FetchCrud';
+const storedUserId = sessionStorage.getItem('userId');
 
 function BucketListPage({ userId }) {
   const [categories, setCategories] = useState([]);
@@ -20,7 +21,7 @@ function BucketListPage({ userId }) {
   const [itemCategory, setItemCategory] = useState('');
 
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem('userId');
+    
 
     if (storedUserId) {
       fetchUserById(storedUserId)
@@ -35,17 +36,19 @@ function BucketListPage({ userId }) {
           setCategories(categoriesData);
           setItems(itemsData);
           setSelectedCategory(selectedCategoryData);
+          console.log(itemsData)
         })
         .catch((error) => console.log(error));
     }
-  }, []);
+  }, [userId]);
 
   const handleCreateItem = () => {
     const newItem = {
       name: itemName,
-      category: itemCategory,
+      category_id: itemCategory,
+      user_id: storedUserId,
+      completed: false,
     };
-
     createItem(newItem)
       .then((data) => {
         setItems([...items, data]);
@@ -54,7 +57,7 @@ function BucketListPage({ userId }) {
       })
       .catch((error) => console.log(error));
   };
-
+  
   const handleUpdateItem = (id, newName) => {
     const updatedItem = {
       name: newName,
@@ -119,6 +122,29 @@ function BucketListPage({ userId }) {
   return (
     <div className="container">
       <h1>Welcome to your Bucket List!</h1>
+      <div className='createitem'>
+                <input
+                  type="text"
+                  placeholder="Item Name"
+                  value={itemName}
+                  onChange={(e) => setItemName(e.target.value)}
+                />
+                <select
+                  className="form-select"
+                  value={itemCategory}
+                  onChange={(e) => setItemCategory(e.target.value)}
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                <button className="btn btn-primary" onClick={handleCreateItem}>
+                  Add Item
+                </button>
+              </div>
       <div className="row">
         <div className="col-3">
           <h2>Categories</h2>
@@ -186,23 +212,7 @@ function BucketListPage({ userId }) {
                       ))}
                 </tbody>
               </table>
-              <div>
-                <input
-                  type="text"
-                  placeholder="Item Name"
-                  value={itemName}
-                  onChange={(e) => setItemName(e.target.value)}
-                />
-                <input
-                  type="text"
-                  placeholder="Item Category"
-                  value={itemCategory}
-                  onChange={(e) => setItemCategory(e.target.value)}
-                />
-                <button className="btn btn-primary" onClick={handleCreateItem}>
-                  Add Item
-                </button>
-              </div>
+             
             </div>
           )}
         </div>
