@@ -53,18 +53,17 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/home">Home</Link>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <Link to="/home" className="nav-link">Home</Link>
             </li>
-            <li>
-              <Link to="/bucketlist">Bucket List</Link>
+            <li className="nav-item">
+              <Link to="/bucketlist" className="nav-link">Bucket List</Link>
             </li>
-            <li>
-              <Link to="/piechart">Pie Chart</Link>
+            <li className="nav-item">
+              <Link to="/piechart" className="nav-link">Pie Chart</Link>
             </li>
-            {/* Add more navigation links if needed */}
           </ul>
         </nav>
 
