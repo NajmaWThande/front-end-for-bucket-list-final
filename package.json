@@ -1,5 +1,4 @@
-{"homepage": "http://soundmoney254.github.io/front-end-for-bucket-list",
-  "name": "bucket-list-front-end",
+{ "name": "bucket-list-front-end",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
