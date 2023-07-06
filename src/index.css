@@ -1,5 +1,6 @@
 body {
-  margin: 0;
+  margin: 10%;
+  margin-top: 20%;
   background-image: url(./images/pexels-monstera-7412085.jpg);
   background-size: 1200px;
   backdrop-filter: blur(2.5px);
@@ -117,4 +118,11 @@ input {
 button {
   width: 250px;
   margin-top: 10px;
+}
+
+.createitem {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width:auto;
 }
