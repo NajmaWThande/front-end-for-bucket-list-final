@@ -150,15 +150,3 @@ export const deleteItem = async (id) => {
   });
   return response;
 };
-
-
-export const fetchCategoryById = async (categoryId) => {
-  const token = getToken();
-  const response = await fetch(`${baseUrl}/categories/${categoryId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  const data = await response.json();
-  return data;
-};
