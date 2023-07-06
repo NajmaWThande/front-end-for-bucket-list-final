@@ -37,12 +37,12 @@ function App() {
 
   const handleLogin = (data) => {
     setIsLoggedIn(true);
-    setUser(data.user);
+    setUser(data.user.id);
     const token = data.token;
-    localStorage.setItem('token', token);
-    localStorage.setItem('userId', data.user.id);
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('userId', data.user.id);
     console.log(token);
-    console.log(data.user.id);
+    console.log(user);
   };
   
 

@@ -12,7 +12,7 @@ import {
   fetchUserById,
 } from './fetchCrud';
 
-function BucketListPage() {
+function BucketListPage({userId}) {
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -20,11 +20,14 @@ function BucketListPage() {
   const [itemCategory, setItemCategory] = useState('');
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
 
+    console.log(userId)
+  
     if (userId) {
       fetchUserById(userId)
         .then((userData) => {
+            console.log(userData)
           return Promise.all([
             fetchCategories(),
             fetchItems(),
@@ -39,6 +42,7 @@ function BucketListPage() {
         .catch((error) => console.log(error));
     }
   }, []);
+  
 
   const handleCreateItem = () => {
     const newItem = {
