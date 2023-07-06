@@ -15,9 +15,10 @@ function BucketListPage() {
   const [itemName, setItemName] = useState('');
   const [itemCategory, setItemCategory] = useState('');
   const [userData, setUserData] = useState('');
+  const storedUserId = sessionStorage.getItem('userId');
+
 
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem('userId');
   
     if (storedUserId) {
       fetchCategories()
@@ -46,18 +47,18 @@ function BucketListPage() {
   const handleCreateItem = () => {
     const newItem = {
       name: itemName,
-      category: itemCategory,
+      category_id: itemCategory,
+      user_id: storedUserId,
+      completed: false,
     };
-
     createItem(newItem)
       .then((data) => {
-        setItems([...items, data]);
+        setItems([...items, newItem]);
         setItemName('');
         setItemCategory('');
       })
       .catch((error) => console.log(error));
   };
-
   const handleUpdateItem = (id, newName) => {
     const updatedItem = {
       name: newName,
