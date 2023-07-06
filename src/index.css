@@ -1,6 +1,8 @@
 body {
   margin: 0;
-  background-color: rgb(152, 171, 182);
+  background-image: url(./images/pexels-monstera-7412085.jpg);
+  background-size: 1200px;
+  backdrop-filter: blur(2.5px);
   min-height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -13,23 +15,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
 h1 {
-  background-color: rgb(164, 157, 157);
+  color: black;
 }
+
 form {
-  background-color: rgb(225, 241, 241);
   width: max-content;
 }
-div {
-  background-color: rgb(235, 235, 177);
-}
+
 button {
   font-feature-settings: "abvm";
   
 }
-.container {
-  margin-top: 40px;
-}
+
 
 h1 {
   text-align: center;
@@ -61,7 +60,7 @@ h2 {
 }
 
 .table {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .btn {
