@@ -41,8 +41,7 @@ const Login = ({ handleLogin }) => {
         }
       })
       .then((data) => {
-        console.log(data);
-        if (data.name) {
+        if (data.token) {
           handleLogin(data);
           navigate('/bucketlist');
         } else {
