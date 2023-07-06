@@ -96,6 +96,7 @@ export const createItem = async (item) => {
     body: JSON.stringify(item),
   });
   const data = await response.json();
+  console.log(data)
   return data;
 };
 
