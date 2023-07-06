@@ -12,7 +12,7 @@ import {
   fetchUserById,
 } from './fetchCrud';
 
-function BucketListPage({userId}) {
+function BucketListPage({ userId }) {
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -20,14 +20,11 @@ function BucketListPage({userId}) {
   const [itemCategory, setItemCategory] = useState('');
 
   useEffect(() => {
-    const userId = sessionStorage.getItem('userId');
+    const storedUserId = sessionStorage.getItem('userId');
 
-    console.log(userId)
-  
-    if (userId) {
-      fetchUserById(userId)
+    if (storedUserId) {
+      fetchUserById(storedUserId)
         .then((userData) => {
-            console.log(userData)
           return Promise.all([
             fetchCategories(),
             fetchItems(),
@@ -42,7 +39,6 @@ function BucketListPage({userId}) {
         .catch((error) => console.log(error));
     }
   }, []);
-  
 
   const handleCreateItem = () => {
     const newItem = {
@@ -124,59 +120,95 @@ function BucketListPage({userId}) {
     <div className="container">
       <h1>Welcome to your Bucket List!</h1>
       <div className="row">
-       {categories.map((category) => (
-          <div key={category.id} className="col">
-            <h2>{category.name}</h2>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items
-                  .filter((item) => item.categoryId === category.id)
-                  .map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.name}</td>
-                      <td>{item.description}</td>
-                      <td>
-                        <button
-                          className="btn btn-primary"
-                          onClick={() =>
-                            handleUpdateItem(item.id, {
-                              completed: !item.completed,
-                            })
-                          }
-                        >
-                          {item.completed ? 'Mark Incomplete' : 'Mark Complete'}
-                        </button>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDeleteItem(item.id)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-            <button
-              className="btn btn-success"
-              onClick={() =>
-                handleCreateItem({ name: '', description: '', categoryId: category.id })
-              }
-            >
-              Add Item
-            </button>
-          </div>
-        ))}
+        <div className="col-3">
+          <h2>Categories</h2>
+          <ul className="list-group">
+            {categories.map((category) => (
+              <li
+                key={category.id}
+                className={`list-group-item ${
+                  selectedCategory && selectedCategory.id === category.id
+                    ? 'active'
+                    : ''
+                }`}
+                onClick={() => handleCategoryClick(category.name)}
+              >
+                {category.name}
+              </li>
+            ))}
+          </ul>
+          <button
+            className="btn btn-success mt-3"
+            onClick={() => handleCreateCategory({ name: '' })}
+          >
+            Add Category
+          </button>
+        </div>
+        <div className="col-9">
+          {selectedCategory && (
+            <div>
+              <h2>{selectedCategory.name}</h2>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items &&
+                    items
+                      .filter((item) => item.categoryId === selectedCategory.id)
+                      .map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.name}</td>
+                          <td>{item.description}</td>
+                          <td>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() =>
+                                handleUpdateItem(item.id, {
+                                  completed: !item.completed,
+                                })
+                              }
+                            >
+                              {item.completed ? 'Mark Incomplete' : 'Mark Complete'}
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleDeleteItem(item.id)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                </tbody>
+              </table>
+              <div>
+                <input
+                  type="text"
+                  placeholder="Item Name"
+                  value={itemName}
+                  onChange={(e) => setItemName(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Item Category"
+                  value={itemCategory}
+                  onChange={(e) => setItemCategory(e.target.value)}
+                />
+                <button className="btn btn-primary" onClick={handleCreateItem}>
+                  Add Item
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  );
+  );  
 }
 
 export default BucketListPage;
