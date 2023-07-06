@@ -30,18 +30,6 @@ export const fetchCategories = async () => {
   return data;
 };
 
-// Fetches a specific category and its items by category name
-export const fetchCategoryByName = async (name) => {
-  const token = getToken();
-  const response = await fetch(`${baseUrl}/categories/${name}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  const data = await response.json();
-  return data;
-};
-
 // Creates a new category
 export const createCategory = async (category) => {
   const token = getToken();

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   fetchCategories,
-  fetchCategoryByName,
-  fetchItems,
+    fetchItems,
   createCategory,
   updateCategory,
   deleteCategory,
@@ -21,17 +20,26 @@ function BucketListPage({ userId }) {
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem('userId');
-
+  
     if (storedUserId) {
       fetchUserById(storedUserId)
         .then((userData) => {
           return Promise.all([
             fetchCategories(),
             fetchItems(),
-            fetchCategoryByName(userData.category),
           ]);
         })
-        .then(([categoriesData, itemsData, selectedCategoryData]) => {
+        .then(([categoriesData, itemsData]) => {
+
+            const uniqueCategoryIds = [...new Set(itemsData.map((item) => item.category_id))];
+            const selectedCategoryData = categoriesData.filter((category) =>
+            uniqueCategoryIds.includes(category.id)
+            );
+
+          console.log('Categories:', categoriesData);
+          console.log('Items:', itemsData);
+          console.log('Selected Category:', selectedCategoryData);
+  
           setCategories(categoriesData);
           setItems(itemsData);
           setSelectedCategory(selectedCategoryData);
@@ -39,7 +47,7 @@ function BucketListPage({ userId }) {
         .catch((error) => console.log(error));
     }
   }, []);
-
+  
   const handleCreateItem = () => {
     const newItem = {
       name: itemName,
@@ -110,12 +118,12 @@ function BucketListPage({ userId }) {
       .catch((error) => console.log(error));
   };
 
-  const handleCategoryClick = (name) => {
-    fetchCategoryByName(name)
-      .then((data) => setSelectedCategory(data))
-      .catch((error) => console.log(error));
-  };
-
+    const handleCategoryClick = (categoryId) => {
+        const selectedCategory = categories.find((category) => category.id === categoryId);
+        const filteredItems = items.filter((item) => item.category_id === categoryId);
+        setSelectedCategory({ ...selectedCategory, items: filteredItems });
+    };
+  
   return (
     <div className="container">
       <h1>Welcome to your Bucket List!</h1>
@@ -123,19 +131,18 @@ function BucketListPage({ userId }) {
         <div className="col-3">
           <h2>Categories</h2>
           <ul className="list-group">
-            {categories.map((category) => (
-              <li
+          {categories.map((category) => (
+            <li
                 key={category.id}
                 className={`list-group-item ${
-                  selectedCategory && selectedCategory.id === category.id
-                    ? 'active'
-                    : ''
+                selectedCategory && selectedCategory.id === category.id ? 'active' : ''
                 }`}
-                onClick={() => handleCategoryClick(category.name)}
-              >
+                onClick={() => handleCategoryClick(category.id)}
+            >
                 {category.name}
-              </li>
+            </li>
             ))}
+
           </ul>
           <button
             className="btn btn-success mt-3"
@@ -157,35 +164,48 @@ function BucketListPage({ userId }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {items &&
-                    items
-                      .filter((item) => item.categoryId === selectedCategory.id)
-                      .map((item) => (
-                        <tr key={item.id}>
-                          <td>{item.name}</td>
-                          <td>{item.description}</td>
-                          <td>
-                            <button
-                              className="btn btn-primary"
-                              onClick={() =>
-                                handleUpdateItem(item.id, {
-                                  completed: !item.completed,
-                                })
-                              }
-                            >
-                              {item.completed ? 'Mark Incomplete' : 'Mark Complete'}
-                            </button>
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => handleDeleteItem(item.id)}
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                </tbody>
-              </table>
+  {(!selectedCategory || !selectedCategory.items) && (
+    // Render all items if no category is selected or no items in the selected category
+    items.map((item) => (
+      <tr key={item.id}>
+        <td>{item.name}</td>
+        <td>{item.description}</td>
+        <td>
+          <button
+            className="btn btn-primary"
+            onClick={() => handleUpdateItem(item.id, { completed: !item.completed })}
+          >
+            {item.completed ? 'Mark Incomplete' : 'Mark Complete'}
+          </button>
+          <button className="btn btn-danger" onClick={() => handleDeleteItem(item.id)}>
+            Delete
+          </button>
+        </td>
+      </tr>
+    ))
+  )}
+  {selectedCategory &&
+    selectedCategory.items &&
+    selectedCategory.items.map((item) => (
+      <tr key={item.id}>
+        <td>{item.name}</td>
+        <td>{item.description}</td>
+        <td>
+          <button
+            className="btn btn-primary"
+            onClick={() => handleUpdateItem(item.id, { completed: !item.completed })}
+          >
+            {item.completed ? 'Mark Incomplete' : 'Mark Complete'}
+          </button>
+          <button className="btn btn-danger" onClick={() => handleDeleteItem(item.id)}>
+            Delete
+          </button>
+        </td>
+      </tr>
+    ))}
+</tbody>
+
+            </table>
               <div>
                 <input
                   type="text"

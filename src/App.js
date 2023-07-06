@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate, Link } from 'react-router-dom';
 import Home from './components/Home';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import BucketListPage from './components/BucketListPage';
+import PieChart from './components/PieChart';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,10 +42,7 @@ function App() {
     const token = data.token;
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('userId', data.user.id);
-    console.log(token);
-    console.log(user);
   };
-  
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -55,6 +53,21 @@ function App() {
   return (
     <div>
       <BrowserRouter>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/home">Home</Link>
+            </li>
+            <li>
+              <Link to="/bucketlist">Bucket List</Link>
+            </li>
+            <li>
+              <Link to="/piechart">Pie Chart</Link>
+            </li>
+            {/* Add more navigation links if needed */}
+          </ul>
+        </nav>
+
         <Routes>
           <Route path="/home" element={<Home user={user} />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
@@ -64,6 +77,7 @@ function App() {
           ) : (
             <Route path="/bucketlist" element={<Navigate to="/login" />} />
           )}
+          <Route path="/piechart" element={<PieChart />} />
           <Route path="/" element={<Navigate to="/home" />} />
         </Routes>
       </BrowserRouter>
