@@ -9,23 +9,75 @@ import {
   createItem,
   updateItem,
   deleteItem,
+  fetchUserById,
 } from './fetchCrud';
 
 function BucketListPage() {
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [itemName, setItemName] = useState('');
+  const [itemCategory, setItemCategory] = useState('');
 
   useEffect(() => {
-    // Fetch categories and items on component mount
-    fetchCategories()
-      .then((data) => setCategories(data))
-      .catch((error) => console.log(error));
+    const userId = localStorage.getItem('userId');
 
-    fetchItems()
-      .then((data) => setItems(data))
-      .catch((error) => console.log(error));
+    if (userId) {
+      fetchUserById(userId)
+        .then((userData) => {
+          return Promise.all([
+            fetchCategories(),
+            fetchItems(),
+            fetchCategoryByName(userData.category),
+          ]);
+        })
+        .then(([categoriesData, itemsData, selectedCategoryData]) => {
+          setCategories(categoriesData);
+          setItems(itemsData);
+          setSelectedCategory(selectedCategoryData);
+        })
+        .catch((error) => console.log(error));
+    }
   }, []);
+
+  const handleCreateItem = () => {
+    const newItem = {
+      name: itemName,
+      category: itemCategory,
+    };
+
+    createItem(newItem)
+      .then((data) => {
+        setItems([...items, data]);
+        setItemName('');
+        setItemCategory('');
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleUpdateItem = (id, newName) => {
+    const updatedItem = {
+      name: newName,
+    };
+
+    updateItem(id, updatedItem)
+      .then((data) => {
+        const updatedItems = items.map((item) =>
+          item.id === id ? { ...item, name: data.name } : item
+        );
+        setItems(updatedItems);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleDeleteItem = (id) => {
+    deleteItem(id)
+      .then(() => {
+        const updatedItems = items.filter((item) => item.id !== id);
+        setItems(updatedItems);
+      })
+      .catch((error) => console.log(error));
+  };
 
   const handleCreateCategory = (category) => {
     createCategory(category)
@@ -35,11 +87,11 @@ function BucketListPage() {
       .catch((error) => console.log(error));
   };
 
-  const handleUpdateCategory = (name, category) => {
-    updateCategory(name, category)
+  const handleUpdateCategory = (name, updatedCategory) => {
+    updateCategory(name, updatedCategory)
       .then((data) => {
-        const updatedCategories = categories.map((c) =>
-          c.name === name ? data : c
+        const updatedCategories = categories.map((category) =>
+          category.name === name ? data : category
         );
         setCategories(updatedCategories);
       })
@@ -49,34 +101,11 @@ function BucketListPage() {
   const handleDeleteCategory = (name) => {
     deleteCategory(name)
       .then(() => {
-        const updatedCategories = categories.filter((c) => c.name !== name);
+        const updatedCategories = categories.filter(
+          (category) => category.name !== name
+        );
         setCategories(updatedCategories);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleCreateItem = (item) => {
-    createItem(item)
-      .then((data) => {
-        setItems([...items, data]);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleUpdateItem = (id, item) => {
-    updateItem(id, item)
-      .then((data) => {
-        const updatedItems = items.map((i) => (i.id === id ? data : i));
-        setItems(updatedItems);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleDeleteItem = (id) => {
-    deleteItem(id)
-      .then(() => {
-        const updatedItems = items.filter((i) => i.id !== id);
-        setItems(updatedItems);
+        setSelectedCategory(null);
       })
       .catch((error) => console.log(error));
   };
@@ -88,137 +117,59 @@ function BucketListPage() {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container">
+      <h1>Welcome to your Bucket List!</h1>
       <div className="row">
-        <div className="col-md-6">
-          <h2>Categories</h2>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map((category) => (
-                <tr key={category.id}>
-                  <td>{category.name}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-primary mr-2"
-                      onClick={() => handleCategoryClick(category.name)}
-                    >
-                      View Items
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDeleteCategory(category.name)}
-                    >
-                      Delete
-                    </button>
-                 ```
-                  </td>
+       {categories.map((category) => (
+          <div key={category.id} className="col">
+            <h2>{category.name}</h2>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="mt-3">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const categoryName = e.target.elements.categoryName.value;
-                handleCreateCategory({ name: categoryName });
-                e.target.reset();
-              }}
-            >
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter category name"
-                  name="categoryName"
-                  required
-                />
-                <button type="submit" className="btn btn-primary">
-                  Create Category
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div className="col-md-6">
-          <h2>Items</h2>
-          {selectedCategory ? (
-            <>
-              <h3>{selectedCategory.name}</h3>
-              {selectedCategory.items.length > 0 ? (
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Actions</th>
+              </thead>
+              <tbody>
+                {items
+                  .filter((item) => item.categoryId === category.id)
+                  .map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.name}</td>
+                      <td>{item.description}</td>
+                      <td>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() =>
+                            handleUpdateItem(item.id, {
+                              completed: !item.completed,
+                            })
+                          }
+                        >
+                          {item.completed ? 'Mark Incomplete' : 'Mark Complete'}
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleDeleteItem(item.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {selectedCategory.items.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.name}</td>
-                        <td>
-                          <button
-                            className="btn btn-sm btn-success mr-2"
-                            onClick={() =>
-                              handleUpdateItem(item.id, {
-                                completed: !item.completed,
-                              })
-                            }
-                          >
-                            {item.completed ? 'Uncheck' : 'Check'}
-                          </button>
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleDeleteItem(item.id)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p>No items found.</p>
-              )}
-              <div className="mt-3">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const itemName = e.target.elements.itemName.value;
-                    handleCreateItem({
-                      name: itemName,
-                      category_id: selectedCategory.id,
-                    });
-                    e.target.reset();
-                  }}
-                >
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter item name"
-                      name="itemName"
-                      required
-                    />
-                    <button type="submit" className="btn btn-primary">
-                      Add Item
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </>
-          ) : (
-            <p>Please select a category to view its items.</p>
-          )}
-        </div>
+                  ))}
+              </tbody>
+            </table>
+            <button
+              className="btn btn-success"
+              onClick={() =>
+                handleCreateItem({ name: '', description: '', categoryId: category.id })
+              }
+            >
+              Add Item
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
