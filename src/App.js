@@ -17,22 +17,11 @@ function App() {
   const loginStatus = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('http://localhost:3001/logged_in', {
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.logged_in) {
-            handleLogin(data);
-          } else {
-            handleLogout();
-          }
-        })
-        .catch((error) => console.log('API error:', error));
-    } else {
-      handleLogout();
+      setIsLoggedIn(true);
+      setUser(sessionStorage.getItem('userId'));
     }
   };
-
+  
   const handleLogin = (data) => {
     setIsLoggedIn(true);
     setUser(data.user.id);
@@ -45,8 +34,21 @@ function App() {
     setIsLoggedIn(false);
     setUser({});
     localStorage.removeItem('token');
+  
+    fetch('http://localhost:3001/logout', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message); // Logged out successfully
+      })
+      .catch((error) => console.log('API error:', error));
   };
-
+  
   return (
     <div>
       <BrowserRouter>

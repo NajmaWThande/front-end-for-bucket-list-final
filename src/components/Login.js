@@ -35,16 +35,16 @@ const Login = ({ handleLogin }) => {
       .then((response) => {
         if (response.ok) {
           return response.json();
-        } else {
-          throw new Error('Network response was not OK');
-        }
+        } 
       })
       .then((data) => {
-        if (data.token) {
+        if (data) {
+          console.log(data)
           handleLogin(data);
           navigate('/bucketlist');
         } else {
-          setErrors(data.error);
+          console.log(data)
+          setErrors(data);
         }
       })
       .catch((error) => console.log('login errors:', error));

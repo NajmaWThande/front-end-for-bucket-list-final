@@ -16,6 +16,7 @@ function BucketListPage() {
   const [completedBy, setCompletedBy] = useState('');
   const [userData, setUserData] = useState('');
   const storedUserId = sessionStorage.getItem('userId');
+  const [approachingItems, setApproachingItems] = useState([]);
 
   useEffect(() => {
     if (storedUserId) {
@@ -41,6 +42,14 @@ function BucketListPage() {
           );
 
           setSelectedCategory(selectedCategoryData);
+          const today = new Date();
+          const approachingItems = sortedItems.filter((item) => {
+            const completedAtDate = new Date(item.completed_at);
+            const timeDiff = completedAtDate.getTime() - today.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            return daysDiff <= 7; 
+          });
+          setApproachingItems(approachingItems);
         })
         .catch((error) => console.log(error));
     }
@@ -111,6 +120,14 @@ function BucketListPage() {
     const selectedCategory = categories.find((category) => category.id === categoryId);
     const filteredItems = items.filter((item) => item.category_id === categoryId);
     setSelectedCategory({ ...selectedCategory, items: filteredItems });
+  };
+
+  const calculateCountdown = (completedAt) => {
+    const today = new Date();
+    const completedAtDate = new Date(completedAt);
+    const timeDiff = completedAtDate.getTime() - today.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return daysDiff > 0 ? `${daysDiff} days left` : 'Completed';
   };
   return (
     <div className="container">
@@ -194,6 +211,12 @@ function BucketListPage() {
                   )}
                 </tbody>
               </table>
+              {approachingItems.map((item) => (
+      <div key={item.id}>
+        <p>{item.name}</p>
+        <p>Countdown: {calculateCountdown(item.completed_at)}</p>
+      </div>
+    ))}
               <div>
                 <input
                   type="text"
