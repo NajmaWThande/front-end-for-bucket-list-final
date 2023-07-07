@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   fetchCategories,
-  createCategory,
   createItem,
   updateItem,
   deleteItem,
@@ -33,9 +32,10 @@ function BucketListPage() {
         })
         .then((userData) => {
           setUserData(userData);
-          setItems(userData.items);
+          const sortedItems = sortItems(userData.items);
+          setItems(sortedItems);
 
-          const uniqueCategoryIds = [...new Set(userData.items.map((item) => item.category_id))];
+          const uniqueCategoryIds = [...new Set(sortedItems.map((item) => item.category_id))];
           const selectedCategoryData = categories.filter((category) =>
             uniqueCategoryIds.includes(category.id)
           );
@@ -45,6 +45,19 @@ function BucketListPage() {
         .catch((error) => console.log(error));
     }
   }, []);
+
+  const sortItems = (items) => {
+    const sortedItems = [...items];
+    sortedItems.sort((a, b) => {
+      if (a.completed && !b.completed) {
+        return -1; // a comes before b
+      } else if (!a.completed && b.completed) {
+        return 1; // b comes before a
+      }
+      return 0; // no change in order
+    });
+    return sortedItems;
+  };
 
   const handleCreateItem = () => {
     const newItem = {
@@ -56,7 +69,7 @@ function BucketListPage() {
     };
     createItem(newItem)
       .then((data) => {
-        setItems([...items, newItem]);
+        setItems([...items, data]);
         setItemName('');
         setItemCategory('');
         setCompletedBy('');
@@ -64,29 +77,32 @@ function BucketListPage() {
       .catch((error) => console.log(error));
   };
 
-  const handleUpdateItem = (id) => {
+  const handleUpdateItem = (id, completed) => {
     const updatedItem = {
-      completed: true,
+      completed: !completed,
     };
 
     updateItem(id, updatedItem)
-      .then((data) => {})
+      .then((data) => {
+        fetchUserById(storedUserId)
+          .then((userData) => {
+            const sortedItems = sortItems(userData.items);
+            setItems(sortedItems);
+          })
+          .catch((error) => console.log(error));
+      })
       .catch((error) => console.log(error));
   };
 
   const handleDeleteItem = (id) => {
     deleteItem(id)
       .then(() => {
-        const updatedItems = items.filter((item) => item.id !== id);
-        setItems(updatedItems);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleCreateCategory = (category) => {
-    createCategory(category)
-      .then((data) => {
-        setCategories([...categories, data]);
+        fetchUserById(storedUserId)
+          .then((userData) => {
+            const sortedItems = sortItems(userData.items);
+            setItems(sortedItems);
+          })
+          .catch((error) => console.log(error));
       })
       .catch((error) => console.log(error));
   };
@@ -96,16 +112,15 @@ function BucketListPage() {
     const filteredItems = items.filter((item) => item.category_id === categoryId);
     setSelectedCategory({ ...selectedCategory, items: filteredItems });
   };
-
   return (
     <div className="container">
       <h1>Welcome to your Bucket List!</h1>
       <div className="row">
         <div className="col-3">
-          <h2>Categories</h2>
+          <h3>Categories</h3>
           <ul className="list-group">
             {categories.map((category) => (
-              <h3
+              <h4
                 key={category.id}
                 className={`list-group-item-success ${
                   selectedCategory && selectedCategory.id === category.id ? 'active' : ''
@@ -113,15 +128,9 @@ function BucketListPage() {
                 onClick={() => handleCategoryClick(category.id)}
               >
                 {category.name}
-              </h3>
+              </h4>
             ))}
           </ul>
-          <button
-            className="btn btn-success mt-3"
-            onClick={() => handleCreateCategory({ name: '' })}
-          >
-            Add Category
-          </button>
         </div>
         <div className="col-9">
           {selectedCategory && (
@@ -145,7 +154,7 @@ function BucketListPage() {
                           <div className="d-flex">
                             <button
                               className="btn btn-primary mr-2"
-                              onClick={() => handleUpdateItem(item.id)}
+                              onClick={() => handleUpdateItem(item.id, item.completed)}
                             >
                               {item.completed ? 'Incomplete' : 'Complete'}
                             </button>
@@ -168,9 +177,7 @@ function BucketListPage() {
                           <div className="d-flex">
                             <button
                               className="btn btn-primary mr-2"
-                              onClick={() =>
-                                handleUpdateItem(item.id, { completed: !item.completed })
-                              }
+                              onClick={() => handleUpdateItem(item.id, item.completed)}
                             >
                               {item.completed ? 'Incomplete' : 'Complete'}
                             </button>
@@ -223,5 +230,4 @@ function BucketListPage() {
     </div>
   );
 }
-
 export default BucketListPage;
