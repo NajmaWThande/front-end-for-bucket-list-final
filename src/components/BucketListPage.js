@@ -59,17 +59,13 @@ function BucketListPage() {
       })
       .catch((error) => console.log(error));
   };
-  const handleUpdateItem = (id, newName) => {
+  const handleUpdateItem = (id) => {
     const updatedItem = {
-      name: newName,
-    };
-
+        completed: true,
+      };
+      
     updateItem(id, updatedItem)
       .then((data) => {
-        const updatedItems = items.map((item) =>
-          item.id === id ? { ...item, name: data.name } : item
-        );
-        setItems(updatedItems);
       })
       .catch((error) => console.log(error));
   };
@@ -145,9 +141,9 @@ function BucketListPage() {
         <td>
           <button
             className="btn btn-primary"
-            onClick={() => handleUpdateItem(item.id, { completed: !item.completed })}
+            onClick={() => handleUpdateItem(item.id)}
           >
-            {item.completed ? 'Mark Incomplete' : 'Mark Complete'}
+            {item.completed ? 'Incomplete' : 'Complete'}
           </button>
           <button className="btn btn-danger" onClick={() => handleDeleteItem(item.id)}>
             Delete
@@ -167,7 +163,7 @@ function BucketListPage() {
             className="btn btn-primary"
             onClick={() => handleUpdateItem(item.id, { completed: !item.completed })}
           >
-            {item.completed ? 'Mark Incomplete' : 'Mark Complete'}
+            {item.completed ? 'Incomplete' : 'Complete'}
           </button>
           <button className="btn btn-danger" onClick={() => handleDeleteItem(item.id)}>
             Delete
