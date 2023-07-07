@@ -14,6 +14,7 @@ function BucketListPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [itemName, setItemName] = useState('');
   const [itemCategory, setItemCategory] = useState('');
+  const [completedBy, setCompletedBy] = useState('');
   const [userData, setUserData] = useState('');
   const storedUserId = sessionStorage.getItem('userId');
 
@@ -21,12 +22,12 @@ function BucketListPage() {
     if (storedUserId) {
       fetchCategories()
         .then((categoriesData) => {
-            const modifiedCategories = categoriesData.map((category) => ({
-                ...category,
-                name: category.name.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
-              }));
-      
-              setCategories(modifiedCategories);
+          const modifiedCategories = categoriesData.map((category) => ({
+            ...category,
+            name: category.name.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
+          }));
+
+          setCategories(modifiedCategories);
 
           return fetchUserById(storedUserId);
         })
@@ -51,12 +52,14 @@ function BucketListPage() {
       category_id: itemCategory,
       user_id: storedUserId,
       completed: false,
+      completed_by: completedBy,
     };
     createItem(newItem)
       .then((data) => {
         setItems([...items, newItem]);
         setItemName('');
         setItemCategory('');
+        setCompletedBy('');
       })
       .catch((error) => console.log(error));
   };
@@ -101,18 +104,17 @@ function BucketListPage() {
         <div className="col-3">
           <h2>Categories</h2>
           <ul className="list-group">
-          {categories.map((category) => (
-            <h3
+            {categories.map((category) => (
+              <h3
                 key={category.id}
                 className={`list-group-item-success ${
-                selectedCategory && selectedCategory.id === category.id ? 'active' : ''
+                  selectedCategory && selectedCategory.id === category.id ? 'active' : ''
                 }`}
                 onClick={() => handleCategoryClick(category.id)}
-            >
+              >
                 {category.name}
-            </h3>
+              </h3>
             ))}
-
           </ul>
           <button
             className="btn btn-success mt-3"
@@ -129,7 +131,7 @@ function BucketListPage() {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Description</th>
+                    <th>Completed By</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -138,7 +140,7 @@ function BucketListPage() {
                     items.map((item) => (
                       <tr key={item.id}>
                         <td>{item.name}</td>
-                        <td>{item.description}</td>
+                        <td>{item.completed_by}</td>
                         <td>
                           <div className="d-flex">
                             <button
@@ -161,7 +163,7 @@ function BucketListPage() {
                     selectedCategory.items.map((item) => (
                       <tr key={item.id}>
                         <td>{item.name}</td>
-                        <td>{item.description}</td>
+                        <td>{item.completed_by}</td>
                         <td>
                           <div className="d-flex">
                             <button
@@ -191,6 +193,12 @@ function BucketListPage() {
                   placeholder="Item Name"
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
+                />
+                <input
+                  type="date"
+                  placeholder="Completed By"
+                  value={completedBy}
+                  onChange={(e) => setCompletedBy(e.target.value)}
                 />
                 <select
                   className="form-select"
