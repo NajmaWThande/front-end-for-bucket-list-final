@@ -17,33 +17,34 @@ function BucketListPage() {
   const [userData, setUserData] = useState('');
   const storedUserId = sessionStorage.getItem('userId');
 
-
   useEffect(() => {
-  
     if (storedUserId) {
       fetchCategories()
         .then((categoriesData) => {
-          setCategories(categoriesData);
-  
+            const modifiedCategories = categoriesData.map((category) => ({
+                ...category,
+                name: category.name.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
+              }));
+      
+              setCategories(modifiedCategories);
+
           return fetchUserById(storedUserId);
         })
         .then((userData) => {
-            console.log(userData)
           setUserData(userData);
           setItems(userData.items);
-  
+
           const uniqueCategoryIds = [...new Set(userData.items.map((item) => item.category_id))];
           const selectedCategoryData = categories.filter((category) =>
             uniqueCategoryIds.includes(category.id)
           );
-  
+
           setSelectedCategory(selectedCategoryData);
         })
         .catch((error) => console.log(error));
     }
   }, []);
-  
-  
+
   const handleCreateItem = () => {
     const newItem = {
       name: itemName,
@@ -59,14 +60,14 @@ function BucketListPage() {
       })
       .catch((error) => console.log(error));
   };
+
   const handleUpdateItem = (id) => {
     const updatedItem = {
-        completed: true,
-      };
-      
+      completed: true,
+    };
+
     updateItem(id, updatedItem)
-      .then((data) => {
-      })
+      .then((data) => {})
       .catch((error) => console.log(error));
   };
 
@@ -87,12 +88,12 @@ function BucketListPage() {
       .catch((error) => console.log(error));
   };
 
-    const handleCategoryClick = (categoryId) => {
-        const selectedCategory = categories.find((category) => category.id === categoryId);
-        const filteredItems = items.filter((item) => item.category_id === categoryId);
-        setSelectedCategory({ ...selectedCategory, items: filteredItems });
-    };
-  
+  const handleCategoryClick = (categoryId) => {
+    const selectedCategory = categories.find((category) => category.id === categoryId);
+    const filteredItems = items.filter((item) => item.category_id === categoryId);
+    setSelectedCategory({ ...selectedCategory, items: filteredItems });
+  };
+
   return (
     <div className="container">
       <h1>Welcome to your Bucket List!</h1>
@@ -101,15 +102,15 @@ function BucketListPage() {
           <h2>Categories</h2>
           <ul className="list-group">
           {categories.map((category) => (
-            <li
+            <h3
                 key={category.id}
-                className={`list-group-item ${
+                className={`list-group-item-success ${
                 selectedCategory && selectedCategory.id === category.id ? 'active' : ''
                 }`}
                 onClick={() => handleCategoryClick(category.id)}
             >
                 {category.name}
-            </li>
+            </h3>
             ))}
 
           </ul>
@@ -124,7 +125,7 @@ function BucketListPage() {
           {selectedCategory && (
             <div>
               <h2>{selectedCategory.name}</h2>
-              <table className="table">
+              <table className="table table-striped table-hover">
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -133,47 +134,57 @@ function BucketListPage() {
                   </tr>
                 </thead>
                 <tbody>
-  {(!selectedCategory || !selectedCategory.items) && (
-    items.map((item) => (
-      <tr key={item.id}>
-        <td>{item.name}</td>
-        <td>{item.description}</td>
-        <td>
-          <button
-            className="btn btn-primary"
-            onClick={() => handleUpdateItem(item.id)}
-          >
-            {item.completed ? 'Incomplete' : 'Complete'}
-          </button>
-          <button className="btn btn-danger" onClick={() => handleDeleteItem(item.id)}>
-            Delete
-          </button>
-        </td>
-      </tr>
-    ))
-  )}
-  {selectedCategory &&
-    selectedCategory.items &&
-    selectedCategory.items.map((item) => (
-      <tr key={item.id}>
-        <td>{item.name}</td>
-        <td>{item.description}</td>
-        <td>
-          <button
-            className="btn btn-primary"
-            onClick={() => handleUpdateItem(item.id, { completed: !item.completed })}
-          >
-            {item.completed ? 'Incomplete' : 'Complete'}
-          </button>
-          <button className="btn btn-danger" onClick={() => handleDeleteItem(item.id)}>
-            Delete
-          </button>
-        </td>
-      </tr>
-    ))}
-</tbody>
-
-            </table>
+                  {!selectedCategory || !selectedCategory.items ? (
+                    items.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.description}</td>
+                        <td>
+                          <div className="d-flex">
+                            <button
+                              className="btn btn-primary mr-2"
+                              onClick={() => handleUpdateItem(item.id)}
+                            >
+                              {item.completed ? 'Incomplete' : 'Complete'}
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleDeleteItem(item.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    selectedCategory.items.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.description}</td>
+                        <td>
+                          <div className="d-flex">
+                            <button
+                              className="btn btn-primary mr-2"
+                              onClick={() =>
+                                handleUpdateItem(item.id, { completed: !item.completed })
+                              }
+                            >
+                              {item.completed ? 'Incomplete' : 'Complete'}
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleDeleteItem(item.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
               <div>
                 <input
                   type="text"
@@ -181,7 +192,7 @@ function BucketListPage() {
                   value={itemName}
                   onChange={(e) => setItemName(e.target.value)}
                 />
-              <select
+                <select
                   className="form-select"
                   value={itemCategory}
                   onChange={(e) => setItemCategory(e.target.value)}
@@ -202,7 +213,7 @@ function BucketListPage() {
         </div>
       </div>
     </div>
-  );  
+  );
 }
 
 export default BucketListPage;

@@ -39,7 +39,7 @@ const Signup = () => {
       body: JSON.stringify(user),
     })
       .then((response) => {
-        if (response.ok) {
+        if (response.status === 201) {
           return response.json();
         } else {
           throw new Error('Network response was not OK');
