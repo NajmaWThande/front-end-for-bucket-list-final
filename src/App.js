@@ -74,6 +74,7 @@ function App() {
         <Routes>
           <Route path="/home" element={<Home user={user} />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
+
           <Route path="/signup" element={<Signup />} />
           {isLoggedIn ? (
             <Route path="/bucketlist" element={<BucketListPage user={user} />} />
