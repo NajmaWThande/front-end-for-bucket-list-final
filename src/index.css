@@ -51,6 +51,11 @@ h2 {
   width: auto;
 }
 
+.btn btn-secondary ml-auto{
+  position: absolute;
+  right: 0;
+}
+
 button.btn-primary {
   background-color: #007bff;
   border-color: #007bff;
@@ -100,4 +105,13 @@ button {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+
+.list-group-item-success {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  color: #0062cc;
+  height: 50px;
 }

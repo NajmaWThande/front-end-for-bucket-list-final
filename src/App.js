@@ -18,9 +18,6 @@ function App() {
     const token = localStorage.getItem('token');
     if (token) {
       fetch('http://localhost:3001/logged_in', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       })
         .then((response) => response.json())
         .then((data) => {
@@ -53,11 +50,13 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <nav className="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link to="/home" className="nav-link">Home</Link>
-            </li>
+            {!isLoggedIn && (
+              <li className="nav-item">
+                <Link to="/home" className="nav-link">Home</Link>
+              </li>
+            )}
             <li className="nav-item">
               <Link to="/bucketlist" className="nav-link">Bucket List</Link>
             </li>
@@ -65,7 +64,11 @@ function App() {
               <Link to="/piechart" className="nav-link">Stats</Link>
             </li>
           </ul>
-          <button className="btn btn-primary ml-auto" onClick={handleLogout}>Logout</button>
+          {isLoggedIn ? (
+            <button className="btn btn-secondary ml-auto" onClick={handleLogout}>Logout</button>
+          ) : (
+            <Link to="/login" className="btn btn-primary ml-auto">Login</Link>
+          )}
         </nav>
 
         <Routes>

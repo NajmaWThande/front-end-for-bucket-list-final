@@ -16,7 +16,6 @@ const PieChart = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
           const items = data.items;
           const completedCount = items.filter(item => item.completed).length;
           const incompleteCount = items.filter(item => !item.completed).length;
