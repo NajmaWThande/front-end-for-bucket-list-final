@@ -62,9 +62,11 @@ function App() {
             <li className="nav-item">
               <Link to="/bucketlist" className="nav-link">Bucket List</Link>
             </li>
-            <li className="nav-item">
-              <Link to="/piechart" className="nav-link">Stats</Link>
-            </li>
+            {isLoggedIn && (
+              <li className="nav-item">
+                <Link to="/piechart" className="nav-link">Stats</Link>
+              </li>
+            )}
           </ul>
           {isLoggedIn ? (
             <button className="btn btn-secondary ml-auto" onClick={handleLogout}>Logout</button>
@@ -83,7 +85,11 @@ function App() {
           ) : (
             <Route path="/bucketlist" element={<Navigate to="/login" />} />
           )}
-          <Route path="/piechart" element={<PieChart />} />
+          {isLoggedIn ? (
+            <Route path="/piechart" element={<PieChart />} />
+          ) : (
+            <Route path="/piechart" element={<Navigate to="/login" />} />
+          )}
           <Route path="/" element={<Navigate to="/home" />} />
         </Routes>
       </BrowserRouter>
