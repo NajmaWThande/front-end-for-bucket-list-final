@@ -35,7 +35,7 @@ function App() {
     setUser({});
     localStorage.removeItem('token');
   
-    fetch('http://localhost:3001/logout', {
+    fetch('https://bucket-list-f9bq.onrender.com/logout', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

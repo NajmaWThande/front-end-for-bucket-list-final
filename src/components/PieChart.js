@@ -8,7 +8,7 @@ const PieChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:3001/users/1', {
+        const response = await fetch('https://bucket-list-f9bq.onrender.com/users/1', {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
           },

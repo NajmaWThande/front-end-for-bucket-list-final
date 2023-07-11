@@ -31,7 +31,7 @@ const Signup = () => {
       password_confirmation
     };
 
-    fetch('http://localhost:3001/users', {
+    fetch('https://bucket-list-f9bq.onrender.com//users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
