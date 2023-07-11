@@ -3,7 +3,7 @@ export const getToken = () => {
   return token;
 };
 
-const baseUrl = 'http://localhost:3001';
+const baseUrl = 'https://bucket-list-f9bq.onrender.com/';
 
 // Fetches all categories and their items
 
