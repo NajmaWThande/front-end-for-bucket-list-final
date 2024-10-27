@@ -99,4 +99,13 @@ This project is licensed under the MIT License.
 
 <https://github.com/JohnKj01/rails-bucket-list-backend>
 
+## Team members
+
+John
+Najma
+Kelvin
+Samuel
+Allan
+
+
 End
